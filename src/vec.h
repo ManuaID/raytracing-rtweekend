@@ -1,6 +1,8 @@
 #ifndef VEC_H
 #define VEC_H
 
+#include <cmath>
+
 class vec3{
     public:
         /*
@@ -160,6 +162,14 @@ inline vec3 random_on_hemisphere(const vec3& normal) {
 
 inline vec3 reflect_value(const vec3& u, const vec3& normal) {
     return u - 2*(dot(u,normal)) * normal;
+}
+
+inline vec3 refract(const vec3& uv,const vec3& normal,double refract_index_divised) {
+    double cos_theta = std::fmin(dot(-uv,normal), 1.0);
+    vec3 r_perp = refract_index_divised*(uv + cos_theta*normal);
+    vec3 r_para = -std::sqrt(std::fabs(1.0 - r_perp.length_squared())) * normal;
+
+    return r_perp + r_para;
 }
 
 #endif
