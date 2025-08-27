@@ -61,8 +61,9 @@ class dielectric: public material {
         bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scattered) const override{
             attenuation = color(1.0,1.0,1.0);
             double ri = rec.front_face ? (1.0/refrac_index): refrac_index;
+            
             vec3 unit_direction = unit_vector(r.direction());
-            vec3 refracted = refract(unit_direction,rec.normal,ri);
+            vec3 refracted = refract(unit_direction,rec.normal,ri); 
 
             scattered = ray(rec.p,refracted);
 
