@@ -1,6 +1,7 @@
 #ifndef VEC_H
 #define VEC_H
 
+#include <cmath>
 
 class vec3{
     public:
