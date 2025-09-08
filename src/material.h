@@ -38,7 +38,7 @@ class metal: public material{
         metal(const color& albedo, double fuzziness): albedo(albedo), fuzz(fuzziness < 1 ? fuzziness:1){};
 
         bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scattered) const {
-            vec3 reflect_direction = reflect_value(r.direction(), rec.normal);
+            vec3 reflect_direction = reflect(r.direction(), rec.normal);
             /*
                 Gets the unit direction of reflect_direction within the unit circle. 
                 Then add on another another vector from the point of the ray with the radius of double fuzziness
@@ -56,16 +56,25 @@ class metal: public material{
 
 class dielectric: public material {
     public:
-        dielectric(double refraction_index): refrac_index(refraction_index) {};
+        dielectric(double refraction_index) : refrac_index(refraction_index) {}
 
-        bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scattered) const override{
-            attenuation = color(1.0,1.0,1.0);
-            double ri = rec.front_face ? (1.0/refrac_index): refrac_index;
-            vec3 unit_direction = unit_vector(r.direction());
-            vec3 refracted = refract(unit_direction,rec.normal,ri);
+        bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override {
+            attenuation = color(1.0, 1.0, 1.0);
+            double ri = rec.front_face ? (1.0/refrac_index) : refrac_index;
 
-            scattered = ray(rec.p,refracted);
+            vec3 unit_direction = unit_vector(r_in.direction());
+            double cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0);
+            double sin_theta = std::sqrt(1.0 - cos_theta*cos_theta);
 
+            bool cannot_refract = ri * sin_theta > 1.0;
+            vec3 direction;
+
+            if (cannot_refract)
+                direction = reflect(unit_direction, rec.normal);
+            else
+                direction = refract(unit_direction, rec.normal, ri);
+
+            scattered = ray(rec.p, direction);
             return true;
         }
     private:
