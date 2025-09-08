@@ -22,6 +22,12 @@ class interval {
             return min < x && x < max;
         }
 
+        double clamp(double x) const {
+            if (x < min) return min;
+            if (x > max) return max;
+            return x;
+        }
+
         //Creates 2 static object referencing interval named empty and universal
         static const interval empty, universal;
     };

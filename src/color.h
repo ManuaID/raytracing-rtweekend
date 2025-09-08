@@ -30,9 +30,9 @@ void write_color(std::ostream& out, const color& pixel_colour) {
     b = linear_to_gamma(b);
 
     static const interval intesity(0.000,0.999);
-    int rbyte = int(RGB_CONSTANT * std::clamp(r,intesity.min, intesity.max));
-    int gbyte = int(RGB_CONSTANT * std::clamp(g,intesity.min, intesity.max));
-    int bbyte = int(RGB_CONSTANT * std::clamp(b,intesity.min, intesity.max));
+    int rbyte = int(RGB_CONSTANT * intesity.clamp(r));
+    int gbyte = int(RGB_CONSTANT * intesity.clamp(g));
+    int bbyte = int(RGB_CONSTANT * intesity.clamp(b));
 
     out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
 }
