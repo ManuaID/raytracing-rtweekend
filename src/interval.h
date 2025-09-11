@@ -1,14 +1,12 @@
 #ifndef INTERVAL_H
 #define INTERVAL_H
 
-#include "rtweekend.h"
-
 class interval {
     public:
         double min, max;
 
-        interval(): min(-infinity), max(+infinity) {}
-        interval(const double& tmin, const double& tmax): min(tmin), max(tmax){};
+        interval(): min(+infinity), max(-infinity) {}
+        interval(double tmin, double tmax): min(tmin), max(tmax){};
 
         double size() {
             return max - min;

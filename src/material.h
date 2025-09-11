@@ -2,7 +2,6 @@
 #define MATERIAL_H
 
 #include "hittable.h"
-#include "rtweekend.h"
 
 class material {
     public:
@@ -38,12 +37,12 @@ class metal: public material{
         metal(const color& albedo, double fuzziness): albedo(albedo), fuzz(fuzziness < 1 ? fuzziness:1){};
 
         bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scattered) const {
-            vec3 reflect_direction = reflect(r.direction(), rec.normal);
+            vec3 reflected = reflect(r.direction(), rec.normal);
             /*
                 Gets the unit direction of reflect_direction within the unit circle. 
                 Then add on another another vector from the point of the ray with the radius of double fuzziness
             */
-            vec3 reflected = unit_vector(reflect_direction) + fuzz * random_unit_vector();
+            reflected = unit_vector(reflected) + (fuzz * random_unit_vector());
             scattered = ray(rec.p, reflected);
             attenuation = albedo;
             //Checks if the ray is pointing within the surface or not. Moreover if it reflects or gets absord
@@ -58,12 +57,12 @@ class dielectric : public material {
     public:
         dielectric(double refraction_index) : refraction_index(refraction_index) {}
 
-        bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered)
+        bool scatter(const ray& r, const hit_record& rec, color& attenuation, ray& scattered)
         const override {
             attenuation = color(1.0, 1.0, 1.0);
             double ri = rec.front_face ? (1.0/refraction_index) : refraction_index;
 
-            vec3 unit_direction = unit_vector(r_in.direction());
+            vec3 unit_direction = unit_vector(r.direction());
             double cos_theta = std::fmin(dot(-unit_direction, rec.normal), 1.0);
             double sin_theta = std::sqrt(1.0 - cos_theta*cos_theta);
 
@@ -85,9 +84,9 @@ class dielectric : public material {
         double refraction_index;
 
         static double reflectance(double cosine, double ref_index) {
-            auto r0 = (1 - ref_index) / (1 + ref_index);
+            double r0 = (1 - ref_index) / (1 + ref_index);
             r0 = r0 * r0;
-            return r0 + (1-r0) * std::pow((1 - cosine),5);
+            return r0 + (1-r0) * pow((1 - cosine),5);
         }
 };
 

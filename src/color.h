@@ -3,7 +3,6 @@
 
 #include "vec.h"
 #include "interval.h"
-#include <algorithm>
 
 #define RGB_CONSTANT 256
 

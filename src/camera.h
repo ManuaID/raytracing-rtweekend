@@ -2,7 +2,6 @@
 #define CAMERA_H
 
 #include "hittable.h"
-#include "rtweekend.h"
 #include "material.h"
 
 class camera {
